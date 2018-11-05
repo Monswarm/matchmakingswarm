@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package matchmaking;
+
+option csharp_namespace = "Matchmaking.Server.Protos";
+
+service Matchmaker {
+  rpc Enqueue (EnqueueRequest) returns (EnqueueReply);
+  rpc Cancel (CancelRequest) returns (CancelReply);
+  rpc GetStatus (StatusRequest) returns (StatusReply);
+}
+
+message EnqueueRequest {
+  string player_id = 1;
+  string region = 2;
+  int32 mmr = 3;
+}
+
+message EnqueueReply {
+  // false when the player already had a ticket
+  bool queued = 1;
+}
+
+message CancelRequest {
+  string player_id = 1;
+}
+
+message CancelReply {
+  bool cancelled = 1;
+}
+
+message StatusRequest {
+  string player_id = 1;
+}
+
+enum TicketState {
+  NOT_FOUND = 0;
+  WAITING = 1;
+  MATCHED = 2;
+}
+
+message StatusReply {
+  TicketState state = 1;
+  string region = 2;
+  int32 mmr = 3;
+  int64 waiting_ms = 4;
+  // current mmr window, only while waiting
+  int32 search_range = 5;
+  MatchInfo match = 6;
+}
+
+message MatchInfo {
+  int64 id = 1;
+  string region = 2;
+  repeated MatchedPlayer players = 3;
+}
+
+message MatchedPlayer {
+  string player_id = 1;
+  int32 mmr = 2;
+}

@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26124.0
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A9709BF2-D792-47C2-8958-CAE6E253090D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matchmaking.Core", "src\Matchmaking.Core\Matchmaking.Core.csproj", "{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matchmaking.Server", "src\Matchmaking.Server\Matchmaking.Server.csproj", "{EF4DB257-CE0A-43EF-98EA-A01629622E34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|x64.Build.0 = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|x64.ActiveCfg = Release|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|x64.Build.0 = Release|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D}.Release|x86.Build.0 = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|x64.Build.0 = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x64.ActiveCfg = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x64.Build.0 = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D} = {A9709BF2-D792-47C2-8958-CAE6E253090D}
+		{EF4DB257-CE0A-43EF-98EA-A01629622E34} = {A9709BF2-D792-47C2-8958-CAE6E253090D}
+	EndGlobalSection
+EndGlobal
