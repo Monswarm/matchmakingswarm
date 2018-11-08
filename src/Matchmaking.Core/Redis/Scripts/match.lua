@@ -12,7 +12,7 @@ local assignPrefix = ARGV[7]
 local ttl = ARGV[8]
 
 local function tolerance(enqueued)
-    local t = initial + perSecond * (now - enqueued)
+    local t = initial + perSecond * (now - enqueued) / 1000
     if t > maxTolerance then
         t = maxTolerance
     end

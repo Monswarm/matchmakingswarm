@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matchmaking.Core", "src\Mat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matchmaking.Server", "src\Matchmaking.Server\Matchmaking.Server.csproj", "{EF4DB257-CE0A-43EF-98EA-A01629622E34}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{98571555-DE5B-4029-A94E-F4AB9361908F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matchmaking.Tests", "tests\Matchmaking.Tests\Matchmaking.Tests.csproj", "{5779A148-41B0-43C2-A162-B9511FFAB1A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,9 +50,22 @@ Global
 		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x64.Build.0 = Release|Any CPU
 		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x86.ActiveCfg = Release|Any CPU
 		{EF4DB257-CE0A-43EF-98EA-A01629622E34}.Release|x86.Build.0 = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|x64.Build.0 = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Debug|x86.Build.0 = Debug|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|x64.Build.0 = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|x86.ActiveCfg = Release|Any CPU
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{53A7BEC9-54BE-4BE1-9AA9-EF41800D2F2D} = {A9709BF2-D792-47C2-8958-CAE6E253090D}
 		{EF4DB257-CE0A-43EF-98EA-A01629622E34} = {A9709BF2-D792-47C2-8958-CAE6E253090D}
+		{5779A148-41B0-43C2-A162-B9511FFAB1A0} = {98571555-DE5B-4029-A94E-F4AB9361908F}
 	EndGlobalSection
 EndGlobal
