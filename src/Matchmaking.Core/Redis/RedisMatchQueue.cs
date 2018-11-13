@@ -24,13 +24,14 @@ namespace Matchmaking.Redis
         private string AssignPrefix => _prefix + "assign:";
 
         private RedisKey QueueKey(string region) => _prefix + "queue:" + region;
+        private RedisKey WaitingKey(string region) => _prefix + "waiting:" + region;
         private RedisKey AssignKey(string playerId) => AssignPrefix + playerId;
 
         public async Task<bool> EnqueueAsync(string playerId, string region, int mmr, DateTimeOffset now)
         {
             var result = await _db.ScriptEvaluateAsync(
                 LuaScripts.Enqueue,
-                new[] { TicketsKey, QueueKey(region), AssignKey(playerId) },
+                new[] { TicketsKey, QueueKey(region), WaitingKey(region), AssignKey(playerId) },
                 new RedisValue[] { playerId, region, mmr, now.ToUnixTimeMilliseconds() }).ConfigureAwait(false);
 
             return (int)result == 1;
@@ -45,7 +46,7 @@ namespace Matchmaking.Redis
             var region = MatchFormat.ParseTicket(ticket).Region;
             var result = await _db.ScriptEvaluateAsync(
                 LuaScripts.Cancel,
-                new[] { TicketsKey, QueueKey(region) },
+                new[] { TicketsKey, QueueKey(region), WaitingKey(region) },
                 new RedisValue[] { playerId, region }).ConfigureAwait(false);
 
             return (int)result == 1;
@@ -76,7 +77,7 @@ namespace Matchmaking.Redis
         {
             var result = await _db.ScriptEvaluateAsync(
                 LuaScripts.Match,
-                new[] { TicketsKey, QueueKey(region), SequenceKey },
+                new[] { TicketsKey, QueueKey(region), WaitingKey(region), SequenceKey },
                 new RedisValue[]
                 {
                     now.ToUnixTimeMilliseconds(),

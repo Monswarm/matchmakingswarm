@@ -90,6 +90,50 @@ namespace Matchmaking.Tests
         }
 
         [RedisFact]
+        public async Task Player_waiting_long_is_not_stuck_between_newcomers()
+        {
+            var queue = CreateQueue();
+            await queue.EnqueueAsync("old", "eu", 1500, T0);
+            await queue.EnqueueAsync("low", "eu", 1440, T0.AddSeconds(20));
+            await queue.EnqueueAsync("high", "eu", 1600, T0.AddSeconds(20));
+
+            var match = Assert.Single(await queue.FindMatchesAsync("eu", T0.AddSeconds(20), _rules));
+
+            Assert.Equal(new[] { "low", "old" }, match.Players.Select(p => p.PlayerId).OrderBy(p => p));
+        }
+
+        [RedisFact]
+        public async Task Oldest_ticket_picks_first()
+        {
+            var queue = CreateQueue();
+            await queue.EnqueueAsync("a", "eu", 1500, T0.AddSeconds(5));
+            await queue.EnqueueAsync("b", "eu", 1530, T0);
+            await queue.EnqueueAsync("c", "eu", 1550, T0.AddSeconds(5));
+
+            var match = Assert.Single(await queue.FindMatchesAsync("eu", T0.AddSeconds(5), _rules));
+
+            // b is the oldest, c is closer to it than a
+            Assert.Equal(new[] { "b", "c" }, match.Players.Select(p => p.PlayerId).OrderBy(p => p));
+            Assert.Equal(TicketState.Waiting, (await queue.GetStatusAsync("a")).State);
+        }
+
+        [RedisFact]
+        public async Task Groups_of_more_than_two()
+        {
+            var queue = CreateQueue();
+            var rules = new MatchRules { PlayersPerMatch = 4, InitialTolerance = 100, TolerancePerSecond = 0, MaxTolerance = 100 };
+            var mmrs = new[] { 1200, 1450, 1480, 1500, 1530, 1560, 1900 };
+            for (var i = 0; i < mmrs.Length; i++)
+                await queue.EnqueueAsync("p" + mmrs[i], "na", mmrs[i], i == 3 ? T0 : T0.AddSeconds(1));
+
+            var matches = await queue.FindMatchesAsync("na", T0.AddSeconds(1), rules);
+
+            var match = Assert.Single(matches);
+            Assert.Equal(new[] { 1450, 1480, 1500, 1530 }, match.Players.Select(p => p.Mmr).OrderBy(m => m));
+            Assert.Equal(T0, match.Players.Single(p => p.Mmr == 1500).EnqueuedAt);
+        }
+
+        [RedisFact]
         public async Task Queueing_again_clears_previous_match()
         {
             var queue = CreateQueue();

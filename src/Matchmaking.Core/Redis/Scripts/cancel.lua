@@ -1,4 +1,4 @@
--- KEYS[1] tickets hash, KEYS[2] region queue
+-- KEYS[1] tickets hash, KEYS[2] region queue by mmr, KEYS[3] region queue by enqueue time
 -- ARGV[1] player id, ARGV[2] region
 local ticket = redis.call('HGET', KEYS[1], ARGV[1])
 if not ticket or string.sub(ticket, 1, #ARGV[2] + 1) ~= ARGV[2] .. '|' then
@@ -7,4 +7,5 @@ end
 
 redis.call('HDEL', KEYS[1], ARGV[1])
 redis.call('ZREM', KEYS[2], ARGV[1])
+redis.call('ZREM', KEYS[3], ARGV[1])
 return 1
