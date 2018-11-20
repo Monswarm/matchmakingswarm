@@ -19,7 +19,8 @@ namespace Matchmaking
             if (waited < TimeSpan.Zero)
                 waited = TimeSpan.Zero;
 
-            return Math.Min(InitialTolerance + TolerancePerSecond * waited.TotalSeconds, MaxTolerance);
+            // same arithmetic as match.lua so both queues agree on the edges
+            return Math.Min(InitialTolerance + TolerancePerSecond * waited.TotalMilliseconds / 1000, MaxTolerance);
         }
     }
 }

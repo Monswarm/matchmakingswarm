@@ -41,6 +41,12 @@ namespace Matchmaking.Server
                         return new RedisMatchQueue(redis.GetDatabase(), options.KeyPrefix, TimeSpan.FromSeconds(options.AssignmentTtlSeconds));
                     });
 
+                    services.AddSingleton(sp =>
+                    {
+                        var options = sp.GetRequiredService<IOptions<MatchmakingOptions>>().Value;
+                        return new MatchmakingTicker(sp.GetRequiredService<IMatchQueue>(), sp.GetRequiredService<IClock>(), options.Rules, options.Regions);
+                    });
+
                     services.AddSingleton<MatchmakerService>();
                     services.AddHostedService<GrpcServerHost>();
                     services.AddHostedService<MatchmakingWorker>();

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Matchmaking.Tests
 {
-    public class RedisMatchQueueTests : IDisposable
+    public class MatchQueueTests : IDisposable
     {
         private static readonly DateTimeOffset T0 = new DateTimeOffset(2018, 11, 1, 18, 0, 0, TimeSpan.Zero);
 
@@ -23,15 +23,26 @@ namespace Matchmaking.Tests
             MaxTolerance = 400
         };
 
-        private RedisMatchQueue CreateQueue()
+        public static TheoryData<string> Queues()
         {
+            var data = new TheoryData<string> { "memory" };
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(RedisFactAttribute.Variable)))
+                data.Add("redis");
+            return data;
+        }
+
+        private IMatchQueue CreateQueue(string kind)
+        {
+            if (kind == "memory")
+                return new InMemoryMatchQueue();
             return new RedisMatchQueue(Connection.Value.GetDatabase(), _prefix, TimeSpan.FromMinutes(1));
         }
 
-        [RedisFact]
-        public async Task Player_cannot_queue_twice()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Player_cannot_queue_twice(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
 
             Assert.True(await queue.EnqueueAsync("p1", "eu", 1500, T0));
             Assert.False(await queue.EnqueueAsync("p1", "na", 1500, T0));
@@ -42,10 +53,11 @@ namespace Matchmaking.Tests
             Assert.Equal(T0, status.EnqueuedAt);
         }
 
-        [RedisFact]
-        public async Task Cancel_removes_ticket()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Cancel_removes_ticket(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("p1", "eu", 1500, T0);
             await queue.EnqueueAsync("p2", "eu", 1510, T0);
 
@@ -57,10 +69,11 @@ namespace Matchmaking.Tests
             Assert.Empty(matches);
         }
 
-        [RedisFact]
-        public async Task Matches_close_players()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Matches_close_players(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("p1", "eu", 1500, T0);
             await queue.EnqueueAsync("p2", "eu", 1540, T0);
             await queue.EnqueueAsync("p3", "na", 1520, T0);
@@ -76,10 +89,11 @@ namespace Matchmaking.Tests
             Assert.Equal(TicketState.Waiting, (await queue.GetStatusAsync("p3")).State);
         }
 
-        [RedisFact]
-        public async Task Window_grows_with_waiting_time()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Window_grows_with_waiting_time(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("p1", "eu", 1500, T0);
             await queue.EnqueueAsync("p2", "eu", 1600, T0);
 
@@ -89,10 +103,11 @@ namespace Matchmaking.Tests
             Assert.Single(await queue.FindMatchesAsync("eu", T0.AddSeconds(10), _rules));
         }
 
-        [RedisFact]
-        public async Task Player_waiting_long_is_not_stuck_between_newcomers()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Player_waiting_long_is_not_stuck_between_newcomers(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("old", "eu", 1500, T0);
             await queue.EnqueueAsync("low", "eu", 1440, T0.AddSeconds(20));
             await queue.EnqueueAsync("high", "eu", 1600, T0.AddSeconds(20));
@@ -102,10 +117,11 @@ namespace Matchmaking.Tests
             Assert.Equal(new[] { "low", "old" }, match.Players.Select(p => p.PlayerId).OrderBy(p => p));
         }
 
-        [RedisFact]
-        public async Task Oldest_ticket_picks_first()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Oldest_ticket_picks_first(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("a", "eu", 1500, T0.AddSeconds(5));
             await queue.EnqueueAsync("b", "eu", 1530, T0);
             await queue.EnqueueAsync("c", "eu", 1550, T0.AddSeconds(5));
@@ -117,10 +133,11 @@ namespace Matchmaking.Tests
             Assert.Equal(TicketState.Waiting, (await queue.GetStatusAsync("a")).State);
         }
 
-        [RedisFact]
-        public async Task Groups_of_more_than_two()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Groups_of_more_than_two(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             var rules = new MatchRules { PlayersPerMatch = 4, InitialTolerance = 100, TolerancePerSecond = 0, MaxTolerance = 100 };
             var mmrs = new[] { 1200, 1450, 1480, 1500, 1530, 1560, 1900 };
             for (var i = 0; i < mmrs.Length; i++)
@@ -133,10 +150,11 @@ namespace Matchmaking.Tests
             Assert.Equal(T0, match.Players.Single(p => p.Mmr == 1500).EnqueuedAt);
         }
 
-        [RedisFact]
-        public async Task Queueing_again_clears_previous_match()
+        [Theory]
+        [MemberData(nameof(Queues))]
+        public async Task Queueing_again_clears_previous_match(string kind)
         {
-            var queue = CreateQueue();
+            var queue = CreateQueue(kind);
             await queue.EnqueueAsync("p1", "eu", 1500, T0);
             await queue.EnqueueAsync("p2", "eu", 1500, T0);
             await queue.FindMatchesAsync("eu", T0.AddSeconds(1), _rules);

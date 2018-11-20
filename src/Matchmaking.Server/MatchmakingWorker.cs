@@ -11,15 +11,13 @@ namespace Matchmaking.Server
 {
     public class MatchmakingWorker : BackgroundService
     {
-        private readonly IMatchQueue _queue;
-        private readonly IClock _clock;
+        private readonly MatchmakingTicker _ticker;
         private readonly MatchmakingOptions _options;
         private readonly ILogger<MatchmakingWorker> _logger;
 
-        public MatchmakingWorker(IMatchQueue queue, IClock clock, IOptions<MatchmakingOptions> options, ILogger<MatchmakingWorker> logger)
+        public MatchmakingWorker(MatchmakingTicker ticker, IOptions<MatchmakingOptions> options, ILogger<MatchmakingWorker> logger)
         {
-            _queue = queue;
-            _clock = clock;
+            _ticker = ticker;
             _options = options.Value;
             _logger = logger;
         }
@@ -27,7 +25,7 @@ namespace Matchmaking.Server
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var interval = TimeSpan.FromMilliseconds(_options.TickMilliseconds);
-            _logger.LogInformation("Matchmaking every {Interval} ms for regions {Regions}", interval.TotalMilliseconds, string.Join(",", _options.Regions));
+            _logger.LogInformation("Matchmaking every {Interval} ms for regions {Regions}", interval.TotalMilliseconds, string.Join(",", _ticker.Regions));
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -53,15 +51,11 @@ namespace Matchmaking.Server
 
         private async Task TickAsync()
         {
-            var now = _clock.UtcNow;
-            foreach (var region in _options.Regions)
+            var matches = await _ticker.TickAsync();
+            foreach (var match in matches)
             {
-                var matches = await _queue.FindMatchesAsync(region, now, _options.Rules);
-                foreach (var match in matches)
-                {
-                    _logger.LogInformation("Match {MatchId} [{Region}] {Players} spread={Spread}",
-                        match.Id, match.Region, string.Join(" ", match.Players.Select(p => p.PlayerId + "(" + p.Mmr + ")")), match.MmrSpread);
-                }
+                _logger.LogInformation("Match {MatchId} [{Region}] {Players} spread={Spread}",
+                    match.Id, match.Region, string.Join(" ", match.Players.Select(p => p.PlayerId + "(" + p.Mmr + ")")), match.MmrSpread);
             }
         }
     }
