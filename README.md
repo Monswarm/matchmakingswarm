@@ -43,10 +43,10 @@ dotnet test tests/Matchmaking.Tests
 MATCHMAKING_TEST_REDIS=localhost:6379 dotnet test tests/Matchmaking.Tests   # also runs the redis tests
 ```
 
-The time comes from an injected clock, so the simulation is deterministic. It runs 10,000 players arriving over 5 minutes, in 1v1 matches with the default rules (50 + 5/s, max 500), and takes about 20 ms:
+The time comes from an injected clock, so the simulation is deterministic. It runs 10,000 players arriving over 5 minutes, in 1v1 matches with the default rules (25 + 10/s, max 300), and takes about 20 ms:
 
 | Metric | Value |
 |---|---|
 | Matched players | 99.7 % |
-| Avg / p95 wait | 1.23 s / 3.71 s |
-| Avg / p95 MMR difference | 25.4 / 58 |
+| Avg / p95 wait | 1.37 s / 4.00 s |
+| Avg / p95 MMR difference | 22.3 / 55 |

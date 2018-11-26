@@ -1,11 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using StackExchange.Redis;
 
 namespace Matchmaking.Server
 {
@@ -27,20 +27,31 @@ namespace Matchmaking.Server
             var interval = TimeSpan.FromMilliseconds(_options.TickMilliseconds);
             _logger.LogInformation("Matchmaking every {Interval} ms for regions {Regions}", interval.TotalMilliseconds, string.Join(",", _ticker.Regions));
 
+            var watch = new Stopwatch();
             while (!stoppingToken.IsCancellationRequested)
             {
+                watch.Restart();
                 try
                 {
                     await TickAsync();
                 }
-                catch (RedisException ex)
+                catch (Exception ex)
                 {
+                    // an exception escaping ExecuteAsync stops the worker without any log
                     _logger.LogError(ex, "Matchmaking tick failed");
+                }
+
+                // keep the cadence: the next tick starts one interval after this one started
+                var wait = interval - watch.Elapsed;
+                if (wait < TimeSpan.Zero)
+                {
+                    _logger.LogWarning("Matchmaking tick took {Elapsed} ms, longer than the interval", watch.ElapsedMilliseconds);
+                    wait = TimeSpan.Zero;
                 }
 
                 try
                 {
-                    await Task.Delay(interval, stoppingToken);
+                    await Task.Delay(wait, stoppingToken);
                 }
                 catch (TaskCanceledException)
                 {

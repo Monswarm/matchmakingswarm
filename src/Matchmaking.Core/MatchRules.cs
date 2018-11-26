@@ -7,12 +7,12 @@ namespace Matchmaking
         public int PlayersPerMatch { get; set; } = 2;
 
         // MMR window when the ticket is created
-        public int InitialTolerance { get; set; } = 50;
+        public int InitialTolerance { get; set; } = 25;
 
         // how much the window grows for each second spent in queue
-        public double TolerancePerSecond { get; set; } = 5;
+        public double TolerancePerSecond { get; set; } = 10;
 
-        public int MaxTolerance { get; set; } = 500;
+        public int MaxTolerance { get; set; } = 300;
 
         public double ToleranceAfter(TimeSpan waited)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Matchmaking.Server
@@ -20,5 +21,17 @@ namespace Matchmaking.Server
         public List<string> Regions { get; set; } = new List<string>();
 
         public MatchRules Rules { get; set; } = new MatchRules();
+
+        public void Validate()
+        {
+            if (Regions == null || Regions.Count == 0)
+                throw new InvalidOperationException("Matchmaking:Regions is empty");
+            if (TickMilliseconds <= 0)
+                throw new InvalidOperationException("Matchmaking:TickMilliseconds must be positive");
+            if (Rules.PlayersPerMatch < 2)
+                throw new InvalidOperationException("Matchmaking:Rules:PlayersPerMatch must be at least 2");
+            if (Rules.InitialTolerance < 0 || Rules.TolerancePerSecond < 0 || Rules.MaxTolerance < Rules.InitialTolerance)
+                throw new InvalidOperationException("Matchmaking:Rules tolerances are not valid");
+        }
     }
 }

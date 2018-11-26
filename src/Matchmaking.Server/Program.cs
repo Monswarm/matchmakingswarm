@@ -29,7 +29,10 @@ namespace Matchmaking.Server
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.Configure<MatchmakingOptions>(context.Configuration.GetSection("Matchmaking"));
+                    var section = context.Configuration.GetSection("Matchmaking");
+                    var settings = section.Get<MatchmakingOptions>() ?? new MatchmakingOptions();
+                    settings.Validate();
+                    services.Configure<MatchmakingOptions>(section);
 
                     services.AddSingleton<IClock, SystemClock>();
                     services.AddSingleton<IConnectionMultiplexer>(sp =>
